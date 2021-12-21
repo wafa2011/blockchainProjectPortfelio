@@ -1,0 +1,102 @@
+<html> 
+<head>
+ <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+ <script> const contract_address = '0xB7290f052abe69394fbb751f26Eb229DBf71076D';
+ /*We will need the contract's address.*/
+const abi = [
+	{
+		"inputs": [],
+		"stateMutability": "nonpayable",
+		"type": "constructor"
+	},
+	{
+		"inputs": [],
+		"name": "maxLength",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "notes",
+		"outputs": [
+			{
+				"internalType": "string",
+				"name": "",
+				"type": "string"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "_maxLength",
+				"type": "uint256"
+			}
+		],
+		"name": "setMaxLength",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "string",
+				"name": "_notes",
+				"type": "string"
+			}
+		],
+		"name": "setNotes",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	}
+];
+/*IMPORTANT*/
+/*ABI for the compiled code copy it and paste it in const abi*/
+let contract; 
+window.addEventListener('load', () => {
+ if(typeof(web3) === 'undefined') {
+ return console.log('Metamask is not installed'); 
+} 
+contract = web3.eth.contract(abi).at(contract_address); 
+/*  On load, we leverage the web3 object to create a contract object using the abi and contract_address defined above.*/
+contract.notes.call((error, result) => {
+ if(error) { 
+return console.log(error);
+ }
+ $('#notes').text(result);
+ });
+ }); 
+/*After the contract object has been created, we can use it to read data, call methods, and post transactions through Metamask. Here we are reading notes, which is a string in the contract.*/
+function setNotes() {
+ let notes = $('#new_notes').val(); contract.setNotes.sendTransaction(
+ notes, 
+{gasPrice: web3.toWei(4.1, 'Gwei')}, 
+(error, result) => { 
+if(error) { return console.log(error);
+ } 
+console.log("txhash: " + result); 
+} ); 
+}
+/*Create the setNotes function for the form to call.*/
+</script>
+ </head> 
+<body> 
+<div id="notes"></div>
+ <br> 
+New Notes: <input type="text" id="new_notes" /> 
+<button onclick="setNotes()">Set Notes</button>
+/* Add a form allowing users to change the notes.*/
+ </body>
+ </html>
