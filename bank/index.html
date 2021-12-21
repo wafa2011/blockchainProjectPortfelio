@@ -1,0 +1,99 @@
+<html>
+    <body>
+        <input type="text" id="amnt"/>
+        <p id="balance" ></p>
+        <button id="add" >add</button>
+        <button id="withdrow" >withdrow</button>
+		<p id="msg" ></p>
+		<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+		<script src="https://cdn.jsdelivr.net/gh/ethereum/web3.js@1.0.0-beta.36/dist/web3.min.js" integrity="sha256-nWBTbvxhJgjslRyuAKJHK+XcZPlCnmIAAMixz6EefVk=" crossorigin="anonymous"></script>
+	   <script >
+		  web3 = new Web3(web3.currentProvider);
+          var contract;
+          $(document).ready(function(){
+			var address = "0x29f6454615E3474149D6ccF7850Cb173cDd1fbf0";
+			var abi =  [
+	{
+		"inputs": [],
+		"stateMutability": "nonpayable",
+		"type": "constructor"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "int256",
+				"name": "amnt",
+				"type": "int256"
+			}
+		],
+		"name": "depose",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "getBalance",
+		"outputs": [
+			{
+				"internalType": "int256",
+				"name": "",
+				"type": "int256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "int256",
+				"name": "amnt",
+				"type": "int256"
+			}
+		],
+		"name": "withdrow",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	}
+]     ; 
+			//const web3 = new Web3(Web3.givenProvider || "ws://localhost:8545");
+			
+			contract = new web3.eth.Contract(abi,address);
+              contract.methods.getBalance().call().then(function(bal){
+                  $('#balance').html(bal);
+              })
+          })
+		  $('#add').click(function(){
+			web3 = new Web3(web3.currentProvider);
+			var mnt=0;
+			mnt = parseInt($('#amnt').val());
+			var acc;
+			web3.eth.getAccounts().then(function(result){
+			acc =  result[0];
+			$('#msg').html("helooo wafa"+acc);
+			return contract.methods.depose(mnt).send({from:acc});
+			}).then(function(tx){
+				console.log(tx);
+			}).catch(function(tx){
+				console.log(tx);
+			})
+		  })
+		  $('#withdrow').click(function(){
+			var mnt=0;
+			mnt = parseInt($('#amnt').val());
+			web3.eth.getAccounts().then(function(accounts){
+			var acc = accounts[0];
+			return contract.methods.withdrow(mnt).send({from:accounts[0]});
+			}).then(function(tx){
+				console.log(tx);
+			}).catch(function(tx){
+				console.log(tx);
+			})
+		  })
+        </script>
+
+    </body>
+
+</html>
